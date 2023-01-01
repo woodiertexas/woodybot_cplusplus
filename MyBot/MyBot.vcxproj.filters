@@ -16,10 +16,19 @@
     <Filter Include="DPP">
       <UniqueIdentifier>{0c7369e9-66c5-45ca-8a7d-8891f46001be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\commands">
+      <UniqueIdentifier>{fe3f1305-ab14-4ec0-bad0-569b9eaa0fa5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MyBot.cpp">
+    <ClCompile Include="woodybot.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ping.cpp">
+      <Filter>Source Files\commands</Filter>
+    </ClCompile>
+    <ClCompile Include="slap.cpp">
+      <Filter>Source Files\commands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -146,8 +155,25 @@
     <ClInclude Include="dependencies\include\dpp-10.0\dpp\wsclient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MyBot.h">
+    <ClInclude Include="woodybot.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="command.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ping.h">
+      <Filter>Source Files\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="slap.h">
+      <Filter>Source Files\commands</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="token1.json">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

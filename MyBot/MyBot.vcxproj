@@ -140,7 +140,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>DPP_WIN_TEMPLATE;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -179,9 +179,13 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MyBot.cpp" />
+    <ClCompile Include="ping.cpp" />
+    <ClCompile Include="slap.cpp" />
+    <ClCompile Include="woodybot.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="command.h" />
+    <ClInclude Include="constants.h" />
     <ClInclude Include="dependencies\include\dpp-10.0\dpp\auditlog.h" />
     <ClInclude Include="dependencies\include\dpp-10.0\dpp\ban.h" />
     <ClInclude Include="dependencies\include\dpp-10.0\dpp\cache.h" />
@@ -223,7 +227,12 @@
     <ClInclude Include="dependencies\include\dpp-10.0\dpp\webhook.h" />
     <ClInclude Include="dependencies\include\dpp-10.0\dpp\win32_safe_warnings.h" />
     <ClInclude Include="dependencies\include\dpp-10.0\dpp\wsclient.h" />
-    <ClInclude Include="MyBot.h" />
+    <ClInclude Include="ping.h" />
+    <ClInclude Include="slap.h" />
+    <ClInclude Include="woodybot.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="token1.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
