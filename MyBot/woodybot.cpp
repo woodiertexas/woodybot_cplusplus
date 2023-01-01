@@ -21,6 +21,7 @@ std::map<std::string, woodybot::command_base> commands = {
 int main() {
 
     // General bot setup
+    dpp::cluster bot("a token");
 
     /* Output simple log messages to stdout */
     bot.on_log(dpp::utility::cout_logger());
