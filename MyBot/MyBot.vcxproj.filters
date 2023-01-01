@@ -171,9 +171,4 @@
       <Filter>Source Files\commands</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="token1.json">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
 </Project>

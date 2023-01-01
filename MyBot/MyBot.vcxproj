@@ -231,9 +231,6 @@
     <ClInclude Include="slap.h" />
     <ClInclude Include="woodybot.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="token1.json" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
