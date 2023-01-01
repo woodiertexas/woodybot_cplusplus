@@ -21,7 +21,7 @@ std::map<std::string, woodybot::command_base> commands = {
 int main() {
 
     // General bot setup
-    dpp::cluster bot("a token");
+    dpp::cluster bot("OTE0OTg3OTM4NjkyMDgzODUy.Ghs4PH.o5wTQixQtVOCIlszYhXuGQhZ6Yqh8-DWTkXHcY");
 
     /* Output simple log messages to stdout */
     bot.on_log(dpp::utility::cout_logger());
@@ -31,6 +31,7 @@ int main() {
         /* Wrap command registration in run_once to make sure it doesnt run on every full reconnection */
         if (dpp::run_once<struct bulk_register>()) {
             std::vector<dpp::slashcommand> slash_commands;
+            std::vector<dpp::slashcommand> no_commands; // Yeet the slash commands for the debuggycord server.
 
             for (auto& def : commands) {
                 dpp::slashcommand cmd;
@@ -41,7 +42,8 @@ int main() {
                 slash_commands.push_back(cmd);
             }
 
-            bot.global_bulk_command_create(slash_commands);
+            bot.global_bulk_command_create(slash_commands, dpp::utility::log_error());
+            bot.guild_bulk_command_create(no_commands, woodybot::debuggycord, dpp::utility::log_error());
         }
     });
 
