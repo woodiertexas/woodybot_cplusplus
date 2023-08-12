@@ -56,11 +56,12 @@ using task_handle = detail::std_coroutine::coroutine_handle<detail::task_promise
 } // namespace detail
 
 /**
- * @brief A coroutine task. It can be co_awaited to make nested coroutines.
+ * @brief A coroutine task. It starts immediately on construction and can be co_await-ed, making it perfect for parallel coroutines returning a value.
  *
  * Can be used in conjunction with coroutine events via dpp::event_router_t::co_attach, or on its own.
  *
- * @warning This feature is EXPERIMENTAL. The API may change at any time and there may be bugs. Please report any to <a href="https://github.com/brainboxdotcc/DPP/issues">GitHub issues</a> or to the <a href="https://discord.gg/dpp">D++ Discord server</a>.
+ * @warning - This feature is EXPERIMENTAL. The API may change at any time and there may be bugs. Please report any to <a href="https://github.com/brainboxdotcc/DPP/issues">GitHub issues</a> or to the <a href="https://discord.gg/dpp">D++ Discord server</a>.
+ * @warning - Using co_await on this object more than once is undefined behavior.
  * @tparam R Return type of the coroutine. Can be void, or a complete object that supports move construction and move assignment.
  */
 template <typename R>
@@ -110,26 +111,8 @@ public:
 	 */
 	~task() {
 		if (handle) {
-			auto &promise = handle.promise();
-
-			if (!promise.is_sync) {
-				std::unique_lock lock{promise.mutex};
-
-				if (promise.destroy) // promise in async thread checked first and skipped clean up, we do it
-				{
-					if (promise.exception && promise.exception_handler)
-						promise.exception_handler(promise.exception);
-					lock.unlock();
-					handle.destroy();
-				}
-				else
-					handle.promise().destroy = true;
-			}
-			else {
-				if (promise.exception && promise.exception_handler)
-					promise.exception_handler(promise.exception);
-				handle.destroy();
-			}
+			assert(handle.done() && "dpp::task's coroutine must be finished before destroying");
+			handle.destroy();
 		}
 	}
 
@@ -155,7 +138,12 @@ public:
 	 * @return bool Whether not to suspend the caller or not
 	 */
 	bool await_ready() {
-		return handle.promise().is_sync;
+		if (handle.promise().is_sync)
+			return true;
+
+		std::lock_guard lock{handle.promise().mutex};
+
+		return (handle.promise().value.has_value());
 	}
 
 	/**
@@ -171,13 +159,11 @@ public:
 	bool await_suspend(detail::std_coroutine::coroutine_handle<T> caller) {
 		auto &my_promise = handle.promise();
 
-		if (my_promise.is_sync)
-			return false;
-
 		std::lock_guard lock{my_promise.mutex};
 
-		if (handle.done())
+		if (handle.promise().value.has_value())
 			return (false);
+
 		if constexpr (requires (T t) { t.is_sync = false; })
 			caller.promise().is_sync = false;
 		my_promise.parent = caller;
@@ -202,18 +188,6 @@ public:
 	bool done() const noexcept {
 		return handle.done();
 	}
-
-	/**
-	 * @brief Set the exception handling function. Called when an exception is thrown but not caught
-	 *
-	 * @warning The exception handler must not throw. If an exception that is not caught is thrown in a detached task, the program will terminate.
-	 */
-	task &on_exception(std::function<void(std::exception_ptr)> func) {
-		handle.promise().exception_handler = std::move(func);
-		if (handle.promise().exception)
-			func(handle.promise().exception);
-		return *this;
-	}
 };
 
 namespace detail {
@@ -233,8 +207,9 @@ struct task_chain_final_awaiter {
 	 * @brief The suspension logic of the coroutine when it finishes. Always suspend the caller, meaning cleaning up the handle is on us
 	 *
 	 * @param handle The handle of this coroutine
+	 * @return std::coroutine_handle<> Handle to resume, which is either the parent if present or std::noop_coroutine() otherwise
 	 */
-	void await_suspend(detail::task_handle<R> handle) noexcept;
+	std_coroutine::coroutine_handle<> await_suspend(detail::task_handle<R> handle) noexcept;
 
 	/*
 	 * @brief Function called when this object is co_awaited by the standard library at the end of final_suspend. Do nothing, return nothing
@@ -268,16 +243,6 @@ struct task_promise_base {
 	 * Will only ever change on the calling thread while callback mutex guards the async thread
 	 */
 	bool is_sync = true;
-
-	/**
-	 * @brief Whether either the task object or the promise is gone and the next one to end will clean up
-	 */
-	bool destroy = false;
-
-	/**
-	 * @brief Function object called when an exception is thrown from a coroutine
-	 */
-	std::function<void(std::exception_ptr)> exception_handler = nullptr;
 
 	/**
 	 * @brief Function called by the standard library when the coroutine is created.
@@ -372,24 +337,8 @@ struct task_promise<void> : task_promise_base {
 };
 
 template <typename R>
-void detail::task_chain_final_awaiter<R>::await_suspend(detail::task_handle<R> handle) noexcept {
-	task_promise<R> &promise = handle.promise();
-	std_coroutine::coroutine_handle<> parent = promise.parent;
-
-	if (!promise.is_sync) {
-		std::unique_lock lock{promise.mutex};
-
-		if (promise.destroy) {
-			if (promise.exception && promise.exception_handler)
-				promise.exception_handler(promise.exception);
-			lock.unlock();
-			handle.destroy();
-		}
-		else
-			promise.destroy = true; // Send the destruction back to the task
-	}
-	if (parent)
-		parent.resume();
+detail::std_coroutine::coroutine_handle<> detail::task_chain_final_awaiter<R>::await_suspend(detail::task_handle<R> handle) noexcept {
+	return handle.promise().parent ? handle.promise().parent : std_coroutine::noop_coroutine();
 }
 
 } // namespace detail

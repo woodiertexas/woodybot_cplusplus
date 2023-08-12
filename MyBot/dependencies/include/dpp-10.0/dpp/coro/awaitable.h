@@ -37,7 +37,7 @@ struct confirmation_callback_t;
  * @brief A co_await-able object handling an API call.
  *
  * @remark - The coroutine may be resumed in another thread, do not rely on thread_local variables.
- * @warning This feature is EXPERIMENTAL. The API may change at any time and there may be bugs. Please report any to <a href="https://github.com/brainboxdotcc/DPP/issues">GitHub issues</a> or to the <a href="https://discord.gg/dpp">D++ Discord server</a>.
+ * @warning - This feature is EXPERIMENTAL. The API may change at any time and there may be bugs. Please report any to <a href="https://github.com/brainboxdotcc/DPP/issues">GitHub issues</a> or to the <a href="https://discord.gg/dpp">D++ Discord server</a>.
  * @tparam R The return type of the API call. Defaults to confirmation_callback_t
  */
 template <typename R>

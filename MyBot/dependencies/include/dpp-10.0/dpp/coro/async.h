@@ -39,9 +39,9 @@ struct confirmation_callback_t;
  * This class is the return type of the dpp::cluster::co_* methods, but it can also be created manually to wrap any async call.
  *
  * @remark - This object's methods, other than constructors and operators, should not be called directly. It is designed to be used with coroutine keywords such as co_await.
- * @remark - This object must not be co_await-ed more than once.
  * @remark - The coroutine may be resumed in another thread, do not rely on thread_local variables.
- * @warning This feature is EXPERIMENTAL. The API may change at any time and there may be bugs. Please report any to <a href="https://github.com/brainboxdotcc/DPP/issues">GitHub issues</a> or to the <a href="https://discord.gg/dpp">D++ Discord server</a>.
+ * @warning - This feature is EXPERIMENTAL. The API may change at any time and there may be bugs. Please report any to <a href="https://github.com/brainboxdotcc/DPP/issues">GitHub issues</a> or to the <a href="https://discord.gg/dpp">D++ Discord server</a>.
+ * @warning - Using co_await on this object more than once is undefined behavior.
  * @tparam R The return type of the API call. Defaults to confirmation_callback_t
  */
 template <typename R>

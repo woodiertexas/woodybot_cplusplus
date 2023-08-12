@@ -47,7 +47,8 @@ namespace detail {
 /**
  * @brief Base type for a coroutine, starts on co_await.
  *
- * @warning This feature is EXPERIMENTAL. The API may change at any time and there may be bugs. Please report any to <a href="https://github.com/brainboxdotcc/DPP/issues">GitHub issues</a> or to the <a href="https://discord.gg/dpp">D++ Discord server</a>.
+ * @warning - This feature is EXPERIMENTAL. The API may change at any time and there may be bugs. Please report any to <a href="https://github.com/brainboxdotcc/DPP/issues">GitHub issues</a> or to the <a href="https://discord.gg/dpp">D++ Discord server</a>.
+ * @warning - Using co_await on this object more than once is undefined behavior.
  * @tparam R Return type of the coroutine. Can be void, or a complete object that supports move construction and move assignment.
  */
 template <typename R>
@@ -243,7 +244,7 @@ namespace detail {
 		}
 
 		/**
-		 * @brief Function (never) called by the standard library when the coroutine is (never) resumed
+		 * @brief Function called by the standard library when this object is resumed
 		 */
 		void await_resume() const noexcept {}
 	};

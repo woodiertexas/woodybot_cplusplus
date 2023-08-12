@@ -34,7 +34,8 @@ namespace dpp {
  *
  * This object stores no state and is the recommended way to use coroutines if you do not need to co_await the result.
  *
- * @warning It cannot be co_awaited, which means the second it co_awaits something, the program jumps back to the calling function, which continues executing.
+ * @warning - This feature is EXPERIMENTAL. The API may change at any time and there may be bugs. Please report any to <a href="https://github.com/brainboxdotcc/DPP/issues">GitHub issues</a> or to the <a href="https://discord.gg/dpp">D++ Discord server</a>.
+ * @warning - It cannot be co_awaited, which means the second it co_awaits something, the program jumps back to the calling function, which continues executing.
  * At this point, if the function returns, every object declared in the function including its parameters are destroyed, which causes dangling references.
  * This is exactly the same problem as references in lambdas : https://dpp.dev/lambdas-and-locals.html.
  * For this reason, `co_await` will error if any parameters are passed by reference.
